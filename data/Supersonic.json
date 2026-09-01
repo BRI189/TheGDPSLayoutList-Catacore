@@ -1,11 +1,18 @@
 {
-  "id": 10009,
+  "id": 4791336,
   "name": "Supersonic",
-  "author": "Desconocido",
+  "author": "ZenthicAlpha",
   "creators": [],
   "verifier": "Catacore Team",
-  "verification": "https://www.youtube.com/",
+  "verification": "https://www.youtube.com/watch?v=6yyRcFvYark",
   "percentToQualify": 100,
   "password": "--",
-  "records": []
+  "records": [
+    {
+      "user": "Pepito",
+      "link": "",
+      "percent": 100,
+      "hz": 120
+    }
+  ]
 }
