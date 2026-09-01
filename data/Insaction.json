@@ -1,19 +1,18 @@
 {
-    "id": 57084298,
-    "name": "Insaction",
-    "author": "ByBoy11",
-    "creators": ["Solo_Creator"],
-    "verifier": "Bri",
-    "verification": "https://youtu.be/vfvadYEj_k0",
-    "percentToQualify": "100",
-    "password": "--",
-    "records": [
-        {
-            "user": "Bri",
-            "link": "https://www.youtube.com/watch?v=MgJeijBGKHU",
-            "percent": 100,
-            "hz": 120
-        },
-
-    ]
+  "id": 57084298,
+  "name": "Insaction",
+  "author": "ByBoy11",
+  "creators": ["Solo_Creator"],
+  "verifier": "Bri",
+  "verification": "https://youtu.be/vfvadYEj_k0",
+  "percentToQualify": 100,
+  "password": "--",
+  "records": [
+    {
+      "user": "Bri",
+      "link": "https://www.youtube.com/watch?v=MgJeijBGKHU",
+      "percent": 100,
+      "hz": 120
+    }
+  ]
 }
