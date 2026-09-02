@@ -120,31 +120,31 @@ export default {
                         </li>
                     </ol>
                 </template>
-                <h3>Submission Requirements</h3>
-                <p>
-                    Achieved the record without using hacks (however, FPS bypass is allowed, up to 360fps)
-                </p>
-                <p>
-                    Achieved the record on the level that is listed on the site - please check the level ID before you submit a record
-                </p>
-                <p>
-                    Have either source audio or clicks/taps in the video. Edited audio only does not count
-                </p>
-                <p>
-                    The recording must have a previous attempt and entire death animation shown before the completion, unless the completion is on the first attempt. Everyplay records are exempt from this
-                </p>
-                <p>
-                    The recording must also show the player hit the endwall, or the completion will be invalidated.
-                </p>
-                <p>
-                    Do not use secret routes or bug routes
-                </p>
-                <p>
-                    Do not use easy modes, only a record of the unmodified level qualifies
-                </p>
-                <p>
-                    Once a level falls onto the Legacy List, we accept records for it for 24 hours after it falls off, then afterwards we never accept records for said level
-                </p>
+               <h3>Requisitos de Envío</h3>
+<p>
+    Haber conseguido el récord sin el uso de hacks (sin embargo, el FPS bypass está permitido)
+</p>
+<p>
+    Haber completado el récord en la copia con rate del nivel
+</p>
+<p>
+    El video debe incluir audio del juego (source audio),y desde la dificultad Insane Demon en adelante clicks o taps audibles y el contador de clicks por segundo (CPS), se permiten ClickSounds para los que no tengan microfono.
+</p>
+<p>
+    TODAS las completaciones deben tener Cheat indicator
+</p>
+<p>
+    La grabación debe mostrar claramente al jugador tocando la pared final (endwall)
+</p>
+<p>
+    Queda estrictamente prohibido el uso de rutas secretas que afecten la dificultad o se salten una parte del nivel.
+</p>
+<p>
+    No se permiten "easy modes"; únicamente es válido el récord del nivel original sin modificaciones.
+</p>
+<p>
+    :)
+</p>
             </div>
         </div>
     </main>
