@@ -75,53 +75,58 @@
 
         <router-view :class="{ dark: store.dark }"></router-view>
 
-       <!-- Contenedor del Buscador Lateral -->
-<div id="search-wrapper" style="display: none; padding: 15px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); background-color: transparent;">
-    <input type="text" id="buscador-niveles" placeholder="🔍 Buscar nivel..." style="width: 100%; padding: 12px 15px; background-color: rgba(0, 0, 0, 0.25); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px; color: white; font-family: 'Lexend Deca', sans-serif; font-size: 14px; outline: none; box-sizing: border-box;">
+        <!-- Buscador Fijo en la Columna Izquierda -->
+<div id="search-container" style="display: none; position: fixed; top: 64px; left: 0; width: 320px; z-index: 999; background-color: #151515; padding: 15px; border-right: 1px solid rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05); box-sizing: border-box;">
+    <input type="text" id="buscador-niveles" placeholder="🔍 Buscar nivel..." style="width: 100%; padding: 12px; background-color: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: white; font-family: 'Lexend Deca', sans-serif; font-size: 14px; outline: none; box-sizing: border-box;">
 </div>
 
 <script>
-    // 1. Filtrar niveles correctamente
+    // 1. Filtrar niveles (Ocultando el elemento correcto)
     document.addEventListener('input', function(e) {
         if (e.target.id === 'buscador-niveles') {
             const texto = e.target.value.toLowerCase().trim();
-            const enlaces = document.querySelectorAll('a'); // Buscar en todos los enlaces
+            const enlaces = document.querySelectorAll('a'); 
             
             enlaces.forEach(enlace => {
-                const contenido = enlace.textContent.toLowerCase().trim();
-                // Identificar que es un botón de nivel si empieza con "#" seguido de un número
-                if (contenido.match(/^#\d+/)) {
-                    if (contenido.includes(texto)) {
-                        enlace.style.display = ''; // Mostrar
-                    } else {
-                        enlace.style.display = 'none'; // Ocultar
+                const nombre = enlace.textContent.toLowerCase();
+                // Si el enlace tiene un "#" seguido de un número, es un nivel
+                if (nombre.match(/#\d+/)) {
+                    // Evitamos ocultar las pestañas principales por accidente
+                    if (!enlace.classList.contains('nav__tab')) {
+                        if (nombre.includes(texto)) {
+                            enlace.style.display = ''; 
+                        } else {
+                            enlace.style.display = 'none';
+                        }
                     }
                 }
             });
         }
     });
 
-    // 2. Mover el buscador para que NO tape los niveles
+    // 2. Acomodar la barra sin romper Vue
     setInterval(() => {
+        const buscador = document.getElementById('search-container');
+        if (!buscador) return;
+
+        // Revisar si estamos en la pestaña principal
         const isList = window.location.hash === '#/' || window.location.hash === '' || window.location.pathname === '/';
-        const buscador = document.getElementById('search-wrapper');
         
-        if (buscador) {
-            if (isList) {
-                buscador.style.display = 'block';
-                // Buscar el botón del #1 Bloodbath
-                const primerNivel = Array.from(document.querySelectorAll('a')).find(el => el.textContent.trim().startsWith('#1 '));
-                
-                // Si encontramos el nivel 1 y el buscador aún no está ahí, lo movemos físicamente arriba de él
-                if (primerNivel && primerNivel.parentElement && buscador.parentElement !== primerNivel.parentElement) {
-                    primerNivel.parentElement.insertBefore(buscador, primerNivel);
-                }
-            } else {
-                // Ocultar si estamos en Leaderboard o Ruleta
-                buscador.style.display = 'none'; 
+        if (isList) {
+            buscador.style.display = 'block';
+            
+            // Buscar Bloodbath (#1)
+            const primerNivel = Array.from(document.querySelectorAll('a')).find(el => el.textContent.includes('#1 '));
+            if (primerNivel && primerNivel.parentElement) {
+                // En lugar de mover la barra, empujamos el contenedor de la lista hacia abajo
+                primerNivel.parentElement.style.paddingTop = '75px';
             }
+        } else {
+            // Ocultar si vamos a Leaderboard o Ruleta
+            buscador.style.display = 'none';
         }
     }, 300);
 </script>
+
     </body>
 </html>
