@@ -54,6 +54,9 @@
                 </router-link>
                 
                 <div class="nav__actions">
+
+                    <input type="text" id="buscador-niveles" placeholder=" Buscar..." style="width: 160px; margin-right: 15px; padding: 8px 12px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.3); border-radius: 6px; color: white; outline: none; font-family: 'Lexend Deca', sans-serif;">
+
                     <!-- Modo Oscuro -->
                     <button class="nav__icon" @click.prevent="store.toggleDark()">
                         <img :src="store.dark ? './assets/light.svg' : './assets/dark.svg'" alt="" />
@@ -75,58 +78,44 @@
 
         <router-view :class="{ dark: store.dark }"></router-view>
 
-        <!-- 1. Clases CSS Inmunes -->
-<style>
-    .ocultar-nivel { display: none !important; }
-    .empujar-lista { margin-top: 85px !important; }
-</style>
-
-<!-- 2. Buscador Totalmente Independiente -->
-<div id="buscador-flotante" style="display: none; position: fixed; top: 64px; left: 0; width: 320px; background-color: #111; padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); z-index: 9999; box-sizing: border-box;">
-    <input type="text" id="input-nivel" placeholder="🔍 Buscar nivel..." style="width: 100%; padding: 10px 15px; background-color: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: white; font-family: 'Lexend Deca', sans-serif; font-size: 14px; outline: none;">
-</div>
-
-<!-- 3. Script Forzado (Se ejecuta 10 veces por segundo) -->
-<script>
-    setInterval(() => {
-        const buscador = document.getElementById('buscador-flotante');
-        if (!buscador) return;
-
-        // Comprueba si estamos en la pestaña principal
-        const isList = window.location.hash === '#/' || window.location.hash === '' || window.location.pathname === '/';
-        if (!isList) {
-            buscador.style.display = 'none';
-            return;
-        }
+        <script>
+            const buscador = document.getElementById('buscador-niveles');
+            let textoBusqueda = "";
         
-        buscador.style.display = 'block';
-        const texto = document.getElementById('input-nivel').value.toLowerCase().trim();
-        
-        // Identificar todos los enlaces que sean niveles (Ej: "#1 Bloodbath")
-        const enlaces = document.querySelectorAll('a');
-        const niveles = Array.from(enlaces).filter(el => /^\s*#\d+/.test(el.textContent));
-        
-        let primerVisible = null;
-
-        niveles.forEach(nivel => {
-            nivel.classList.remove('empujar-lista'); // Limpiar para recalcular
-            
-            // Lógica de búsqueda
-            if (texto === '' || nivel.textContent.toLowerCase().includes(texto)) {
-                nivel.classList.remove('ocultar-nivel');
-                // Guardamos en memoria cuál es el primer nivel que pasó el filtro
-                if (!primerVisible) primerVisible = nivel; 
-            } else {
-                nivel.classList.add('ocultar-nivel');
+            if (buscador) {
+                buscador.addEventListener('input', (e) => {
+                    textoBusqueda = e.target.value.toLowerCase().trim();
+                    aplicarFiltro();
+                });
             }
-        });
-
-        // Aplicamos el margen hacia abajo ÚNICAMENTE al primer nivel de la lista visible
-        if (primerVisible) {
-            primerVisible.classList.add('empujar-lista');
-        }
-    }, 100);
-</script>
+        
+            function aplicarFiltro() {
+                const enlaces = document.querySelectorAll('a');
+                enlaces.forEach(enlace => {
+                    // Limpiamos saltos de línea y espacios invisibles para que la búsqueda no falle
+                    const textoLimpio = enlace.textContent.replace(/\s+/g, ' ').trim().toLowerCase();
+                    
+                    // Detectar que es un nivel buscando un "#" seguido de números, ignorando los botones del menú superior
+                    if (/#\d+/.test(textoLimpio) && !enlace.closest('.nav')) {
+                        if (textoBusqueda === '' || textoLimpio.includes(textoBusqueda)) {
+                            enlace.style.setProperty('display', '', 'important');
+                        } else {
+                            enlace.style.setProperty('display', 'none', 'important');
+                        }
+                    }
+                });
+            }
+        
+            // El arma secreta: Vigila a Vue.js constantemente
+            const observer = new MutationObserver(() => {
+                if (textoBusqueda !== "") {
+                    aplicarFiltro();
+                }
+            });
+        
+            // Solo observa cambios estructurales (si Vue añade o quita elementos) para no crear un bucle infinito
+            observer.observe(document.body, { childList: true, subtree: true });
+        </script>
 
     </body>
 </html>
