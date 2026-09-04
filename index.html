@@ -52,6 +52,7 @@
                     <span class="type-label-lg">Roulette</span>
                 </router-link>
                 <div class="nav__actions">
+                    <!-- 1. Modo Oscuro -->
                     <button
                         class="nav__icon"
                         @click.prevent="store.toggleDark()"
@@ -61,20 +62,26 @@
                             alt=""
                         />
                     </button>
-
-                    <!-- Botón del Historial de Cambios -->
-                    <a class="nav__cta type-label-lg" href="./changelog.html" style="background-color: transparent; border: 1px solid rgba(255,255,255,0.4); color: #ffffff; text-decoration: none; margin-right: 10px;">Historial</a>
-
-                    <!-- Replace the '#' with your discord server's invite-->
+                
+                    <!-- 2. Discord -->
                     <a class="nav__icon" href="#" target="_blank">
                         <img src="./assets/discord.svg" alt="Discord Logo" />
                     </a>
-                    <!-- List record submission form, add a link to replace the '#' when putting a link to your list submission form-->
+                
+                    <!-- 3. Enviar Récord -->
                     <a
                         class="nav__cta type-label-lg"
-                        href="https://docs.google.com/forms/d/e/1FAIpQLSc6vI6HTKxmYEql6Ik7aRJzEtLfsId0EQzhAO6Ig_XGRYL9fA/viewform?usp=publish-editor"
+                        href="TU_LINK_DE_GOOGLE_FORMS"
                         target="_blank"
                         >Enviar Record</a
+                    >
+                
+                    <!-- 4. Historial (al extremo derecho) -->
+                    <a
+                        class="nav__cta type-label-lg"
+                        href="./changelog.html"
+                        style="background-color: transparent; border: 1px solid rgba(255,255,255,0.4); color: #ffffff; text-decoration: none; margin-left: 10px;"
+                        >Historial</a
                     >
                 </div>
             </nav>
