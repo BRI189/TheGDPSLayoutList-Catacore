@@ -53,36 +53,24 @@
                 </router-link>
                 <div class="nav__actions">
                     <!-- 1. Modo Oscuro -->
-                    <button
-                        class="nav__icon"
-                        @click.prevent="store.toggleDark()"
-                    >
-                        <img
-                            :src="store.dark ? './assets/light.svg' : './assets/dark.svg'"
-                            alt=""
-                        />
+                    <button class="nav__icon" @click.prevent="store.toggleDark()">
+                        <img :src="store.dark ? './assets/light.svg' : './assets/dark.svg'" alt="" />
                     </button>
                 
                     <!-- 2. Discord -->
-                    <a class="nav__icon" href="#" target="_blank">
+                    <a class="nav__icon" href="TU_LINK_DE_DISCORD" target="_blank">
                         <img src="./assets/discord.svg" alt="Discord Logo" />
                     </a>
                 
                     <!-- 3. Enviar Récord -->
-                    <a
-                        class="nav__cta type-label-lg"
-                        href="TU_LINK_DE_GOOGLE_FORMS"
-                        target="_blank"
-                        >Enviar Record</a
-                    >
+                    <a class="nav__cta type-label-lg" href="TU_LINK_DE_FORMS" target="_blank">Enviar Record</a>
                 
+                    <!-- Línea divisoria vertical -->
+                    <div style="width: 1px; height: 24px; background-color: rgba(255,255,255,0.3); margin: 0 10px;"></div>
+                
+                    <!-- 4. Historial (Separado) -->
+                    <a class="nav__cta type-label-lg" href="./changelog.html" style="background-color: transparent; border: 1px solid rgba(255,255,255,0.4); color: #ffffff;">Historial</a>
                 </div>
-                <a
-            class="nav__cta type-label-lg"
-            href="./changelog.html"
-            style="background-color: transparent; border: 1px solid rgba(255,255,255,0.4); color: #ffffff; text-decoration: none; margin-left: auto;"
-            >Historial</a
-        >
             </nav>
         </header>
         <router-view :class="{ dark: store.dark }"></router-view>
