@@ -55,8 +55,6 @@
                 
                 <div class="nav__actions">
 
-                    <input type="text" id="buscador-niveles" placeholder=" Buscar..." style="width: 160px; margin-right: 15px; padding: 8px 12px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.3); border-radius: 6px; color: white; outline: none; font-family: 'Lexend Deca', sans-serif;">
-
                     <!-- Modo Oscuro -->
                     <button class="nav__icon" @click.prevent="store.toggleDark()">
                         <img :src="store.dark ? './assets/light.svg' : './assets/dark.svg'" alt="" />
@@ -78,44 +76,6 @@
 
         <router-view :class="{ dark: store.dark }"></router-view>
 
-        <script>
-            const buscador = document.getElementById('buscador-niveles');
-            let textoBusqueda = "";
-        
-            if (buscador) {
-                buscador.addEventListener('input', (e) => {
-                    textoBusqueda = e.target.value.toLowerCase().trim();
-                    aplicarFiltro();
-                });
-            }
-        
-            function aplicarFiltro() {
-                const enlaces = document.querySelectorAll('a');
-                enlaces.forEach(enlace => {
-                    // Limpiamos saltos de línea y espacios invisibles para que la búsqueda no falle
-                    const textoLimpio = enlace.textContent.replace(/\s+/g, ' ').trim().toLowerCase();
-                    
-                    // Detectar que es un nivel buscando un "#" seguido de números, ignorando los botones del menú superior
-                    if (/#\d+/.test(textoLimpio) && !enlace.closest('.nav')) {
-                        if (textoBusqueda === '' || textoLimpio.includes(textoBusqueda)) {
-                            enlace.style.setProperty('display', '', 'important');
-                        } else {
-                            enlace.style.setProperty('display', 'none', 'important');
-                        }
-                    }
-                });
-            }
-        
-            // El arma secreta: Vigila a Vue.js constantemente
-            const observer = new MutationObserver(() => {
-                if (textoBusqueda !== "") {
-                    aplicarFiltro();
-                }
-            });
-        
-            // Solo observa cambios estructurales (si Vue añade o quita elementos) para no crear un bucle infinito
-            observer.observe(document.body, { childList: true, subtree: true });
-        </script>
 
     </body>
 </html>
