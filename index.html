@@ -80,37 +80,39 @@
     <input type="text" id="buscador-niveles" placeholder="🔍 Buscar nivel..." style="width: 100%; padding: 8px 12px; background-color: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; color: white; font-family: 'Lexend Deca', sans-serif; font-size: 14px; outline: none;">
 </div>
 
+<!-- Buscador y Estilos Globales -->
 <style>
-    /* Esta regla es inmune a Vue.js */
-    .oculto-por-buscador {
-        display: none !important;
-    }
+    /* Forzamos el espacio en la lista para que la barra no tape el top 1 */
+    .espacio-buscador { padding-top: 75px !important; }
+    /* Clase invencible para ocultar los niveles que no coincidan */
+    .escondido { display: none !important; }
 </style>
 
+<div id="search-container" style="display: none; position: fixed; top: 64px; left: 0; height: 75px; z-index: 9999; background-color: #111; padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); border-right: 1px solid rgba(255,255,255,0.05); box-sizing: border-box; align-items: center;">
+    <input type="text" id="buscador-niveles" placeholder="🔍 Buscar nivel..." style="width: 100%; padding: 10px 15px; background-color: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: white; font-family: 'Lexend Deca', sans-serif; font-size: 14px; outline: none;">
+</div>
+
 <script>
-    // 1. Filtrado usando clases CSS en lugar de estilos en línea
+    // 1. Filtrado apuntando a la clase exacta de la plantilla (.list__link)
     document.addEventListener('input', function(e) {
         if (e.target.id === 'buscador-niveles') {
             const texto = e.target.value.toLowerCase().trim();
-            const enlaces = document.querySelectorAll('a'); 
+            // Seleccionamos específicamente los botones de la lista de niveles
+            const niveles = document.querySelectorAll('.list__link'); 
             
-            enlaces.forEach(enlace => {
-                // Limpiamos los espacios extraños que Vue le pone al texto
-                const textoBoton = enlace.textContent.toLowerCase().replace(/\s+/g, ' ').trim();
+            niveles.forEach(nivel => {
+                const nombreNivel = nivel.textContent.toLowerCase();
                 
-                // Si el botón tiene un "#" seguido de un número (es un nivel de la lista)
-                if (/#\d+/.test(textoBoton) && !enlace.classList.contains('nav__tab')) {
-                    if (texto === '' || textoBoton.includes(texto)) {
-                        enlace.classList.remove('oculto-por-buscador');
-                    } else {
-                        enlace.classList.add('oculto-por-buscador');
-                    }
+                if (texto === '' || nombreNivel.includes(texto)) {
+                    nivel.classList.remove('escondido');
+                } else {
+                    nivel.classList.add('escondido');
                 }
             });
         }
     });
 
-    // 2. Rescatar a Bloodbath (#1) empujándolo hacia abajo
+    // 2. Control de posición y tamaño adaptativo
     setInterval(() => {
         const buscador = document.getElementById('search-container');
         if (!buscador) return;
@@ -120,27 +122,17 @@
         if (isList) {
             buscador.style.display = 'flex';
             
-            // Buscamos específicamente el botón del top #1
-            const enlaces = document.querySelectorAll('a');
-            let primerNivel = null;
-            
-            for (let enlace of enlaces) {
-                const textoLimpio = enlace.textContent.replace(/\s+/g, ' ').trim();
-                // Si el texto empieza con "#1 "
-                if (textoLimpio.startsWith('#1 ')) {
-                    primerNivel = enlace;
-                    break;
-                }
-            }
-            
-            // Le aplicamos un margen superior solo al primer nivel para que baje
-            if (primerNivel) {
-                primerNivel.style.setProperty('margin-top', '60px', 'important');
+            // Buscar el primer nivel para empujar a su contenedor padre (la columna)
+            const primerNivel = document.querySelector('.list__link');
+            if (primerNivel && primerNivel.parentElement) {
+                primerNivel.parentElement.classList.add('espacio-buscador');
+                // Ajustar la barra para que mida exactamente lo mismo que la columna
+                buscador.style.width = primerNivel.parentElement.offsetWidth + 'px';
             }
         } else {
-            buscador.style.display = 'none';
+            buscador.style.display = 'none'; // Ocultar si cambias de pestaña
         }
-    }, 500);
+    }, 300);
 </script>
 
     </body>
