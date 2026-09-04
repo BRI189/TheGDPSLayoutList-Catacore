@@ -72,6 +72,44 @@
         
         <!-- Botón Historial FIJADO a la pantalla -->
         <a class="nav__cta type-label-lg" href="./changelog.html" style="position: fixed; top: 15px; right: 20px; z-index: 9999; background-color: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.4); color: #ffffff; text-decoration: none; padding: 0 20px; height: 36px; display: flex; align-items: center; border-radius: 8px; font-size: 15px;">Historial</a>
+
+        <!-- Contenedor del Buscador -->
+<div id="search-wrapper" style="position: fixed; top: 80px; left: 20px; z-index: 99; width: 320px;">
+    <input type="text" id="buscador-niveles" placeholder="🔍 Buscar nivel..." style="width: 100%; padding: 12px 15px; background-color: rgba(26, 26, 26, 0.9); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px; color: white; font-family: 'Lexend Deca', sans-serif; font-size: 14px; outline: none; backdrop-filter: blur(5px);">
+</div>
         <router-view :class="{ dark: store.dark }"></router-view>
+
+        <script>
+            // 1. Filtrar los niveles al escribir
+            document.addEventListener('input', function(e) {
+                if (e.target.id === 'buscador-niveles') {
+                    const texto = e.target.value.toLowerCase();
+                    // Selecciona las clases estándar de los botones en esta plantilla
+                    const botonesLista = document.querySelectorAll('.list__link, .list__item');
+                    
+                    botonesLista.forEach(boton => {
+                        const nombre = boton.textContent.toLowerCase();
+                        if (nombre.includes(texto)) {
+                            boton.style.display = ''; 
+                        } else {
+                            boton.style.display = 'none';
+                        }
+                    });
+                }
+            });
+        
+            // 2. Ocultar el buscador automáticamente fuera de la pestaña "List"
+            setInterval(() => {
+                const wrapper = document.getElementById('search-wrapper');
+                if (wrapper) {
+                    const url = window.location.hash || window.location.pathname;
+                    if (url.includes('leaderboard') || url.includes('roulette') || url.includes('changelog')) {
+                        wrapper.style.display = 'none';
+                    } else {
+                        wrapper.style.display = 'block';
+                    }
+                }
+            }, 300);
+        </script>
     </body>
 </html>
