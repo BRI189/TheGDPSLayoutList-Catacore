@@ -75,55 +75,52 @@
 
         <router-view :class="{ dark: store.dark }"></router-view>
 
-        <!-- Buscador Fijo en la Columna Izquierda -->
-<div id="search-container" style="display: none; position: fixed; top: 64px; left: 0; width: 320px; z-index: 999; background-color: #151515; padding: 15px; border-right: 1px solid rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05); box-sizing: border-box;">
-    <input type="text" id="buscador-niveles" placeholder="🔍 Buscar nivel..." style="width: 100%; padding: 12px; background-color: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: white; font-family: 'Lexend Deca', sans-serif; font-size: 14px; outline: none; box-sizing: border-box;">
+      <!-- Buscador Fijo -->
+<div id="search-container" style="position: fixed; top: 64px; left: 0; width: 320px; z-index: 9999; background-color: #111; padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); box-sizing: border-box;">
+    <input type="text" id="buscador-niveles" placeholder="🔍 Buscar nivel..." style="width: 100%; padding: 12px; background-color: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; color: white; font-family: 'Lexend Deca', sans-serif; font-size: 14px; outline: none;">
 </div>
 
 <script>
-    // 1. Filtrar niveles (Ocultando el elemento correcto)
+    // 1. Filtro invencible (usa !important para ganarle al CSS de la plantilla)
     document.addEventListener('input', function(e) {
         if (e.target.id === 'buscador-niveles') {
             const texto = e.target.value.toLowerCase().trim();
             const enlaces = document.querySelectorAll('a'); 
             
             enlaces.forEach(enlace => {
-                const nombre = enlace.textContent.toLowerCase();
-                // Si el enlace tiene un "#" seguido de un número, es un nivel
-                if (nombre.match(/#\d+/)) {
-                    // Evitamos ocultar las pestañas principales por accidente
-                    if (!enlace.classList.contains('nav__tab')) {
-                        if (nombre.includes(texto)) {
-                            enlace.style.display = ''; 
-                        } else {
-                            enlace.style.display = 'none';
-                        }
+                const textoBoton = enlace.textContent.toLowerCase().trim();
+                
+                // Si es un nivel de la barra lateral (empieza con #)
+                if (/^#\d+/.test(textoBoton) && !enlace.classList.contains('nav__tab')) {
+                    if (texto === '' || textoBoton.includes(texto)) {
+                        enlace.style.setProperty('display', 'flex', 'important'); // Forzar mostrar
+                    } else {
+                        enlace.style.setProperty('display', 'none', 'important'); // Forzar ocultar
                     }
                 }
             });
         }
     });
 
-    // 2. Acomodar la barra sin romper Vue
+    // 2. Empujar toda la lista de niveles hacia abajo
     setInterval(() => {
         const buscador = document.getElementById('search-container');
         if (!buscador) return;
 
-        // Revisar si estamos en la pestaña principal
         const isList = window.location.hash === '#/' || window.location.hash === '' || window.location.pathname === '/';
         
         if (isList) {
             buscador.style.display = 'block';
             
-            // Buscar Bloodbath (#1)
-            const primerNivel = Array.from(document.querySelectorAll('a')).find(el => el.textContent.includes('#1 '));
-            if (primerNivel && primerNivel.parentElement) {
-                // En lugar de mover la barra, empujamos el contenedor de la lista hacia abajo
-                primerNivel.parentElement.style.paddingTop = '75px';
+            // Buscar cualquier nivel para identificar el contenedor de la lista
+            const cualquierNivel = Array.from(document.querySelectorAll('a')).find(el => /^#\d+/.test(el.textContent.trim()));
+            
+            if (cualquierNivel && cualquierNivel.parentElement) {
+                // Le damos espacio a TODO el contenedor, así no importa qué nivel esté de primero
+                cualquierNivel.parentElement.style.setProperty('padding-top', '75px', 'important');
             }
         } else {
-            // Ocultar si vamos a Leaderboard o Ruleta
-            buscador.style.display = 'none';
+            buscador.style.display = 'none'; // Ocultar en Leaderboard
         }
     }, 300);
 </script>
