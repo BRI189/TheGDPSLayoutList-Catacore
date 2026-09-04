@@ -41,6 +41,7 @@
                 <h2>CataList</h2>
                 <p>Catacore Team</p>
             </div>
+            
             <nav class="nav">
                 <router-link class="nav__tab" to="/">
                     <span class="type-label-lg">List</span>
@@ -51,26 +52,26 @@
                 <router-link class="nav__tab" to="/roulette">
                     <span class="type-label-lg">Roulette</span>
                 </router-link>
+                
                 <div class="nav__actions">
-                    <!-- 1. Modo Oscuro -->
+                    <!-- Modo Oscuro -->
                     <button class="nav__icon" @click.prevent="store.toggleDark()">
                         <img :src="store.dark ? './assets/light.svg' : './assets/dark.svg'" alt="" />
                     </button>
-                
-                    <!-- 2. Discord -->
+                    
+                    <!-- Discord -->
                     <a class="nav__icon" href="TU_LINK_DE_DISCORD" target="_blank">
                         <img src="./assets/discord.svg" alt="Discord Logo" />
                     </a>
-                
-                    <!-- 3. Enviar Récord -->
+                    
+                    <!-- Enviar Record -->
                     <a class="nav__cta type-label-lg" href="https://docs.google.com/forms/d/e/1FAIpQLSc6vI6HTKxmYEql6Ik7aRJzEtLfsId0EQzhAO6Ig_XGRYL9fA/viewform?usp=dialog" target="_blank">Enviar Record</a>
-                
-                
                 </div>
             </nav>
-            <!-- Botón Historial FORZADO a la esquina superior derecha -->
-    <a class="nav__cta type-label-lg" href="./changelog.html" style="position: absolute; right: 30px; top: 50%; transform: translateY(-50%); background-color: transparent; border: 1px solid rgba(255,255,255,0.4); color: #ffffff; text-decoration: none;">Historial</a>
         </header>
+        
+        <!-- Botón Historial FIJADO a la pantalla -->
+<a class="nav__cta type-label-lg" href="./changelog.html" style="position: fixed; top: 15px; right: 20px; z-index: 9999; background-color: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.4); color: #ffffff; text-decoration: none;">Historial</a>
         <router-view :class="{ dark: store.dark }"></router-view>
     </body>
 </html>
