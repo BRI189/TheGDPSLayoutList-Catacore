@@ -75,54 +75,58 @@
 
         <router-view :class="{ dark: store.dark }"></router-view>
 
-        <script>
-            setInterval(() => {
-                // 1. Confirmar que estamos en la pestaña de la lista principal
-                const isList = window.location.hash === '#/' || window.location.hash === '' || window.location.pathname === '/';
-                if (!isList) return;
+        <!-- 1. Clases CSS Inmunes -->
+<style>
+    .ocultar-nivel { display: none !important; }
+    .empujar-lista { margin-top: 85px !important; }
+</style>
+
+<!-- 2. Buscador Totalmente Independiente -->
+<div id="buscador-flotante" style="display: none; position: fixed; top: 64px; left: 0; width: 320px; background-color: #111; padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); z-index: 9999; box-sizing: border-box;">
+    <input type="text" id="input-nivel" placeholder="🔍 Buscar nivel..." style="width: 100%; padding: 10px 15px; background-color: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: white; font-family: 'Lexend Deca', sans-serif; font-size: 14px; outline: none;">
+</div>
+
+<!-- 3. Script Forzado (Se ejecuta 10 veces por segundo) -->
+<script>
+    setInterval(() => {
+        const buscador = document.getElementById('buscador-flotante');
+        if (!buscador) return;
+
+        // Comprueba si estamos en la pestaña principal
+        const isList = window.location.hash === '#/' || window.location.hash === '' || window.location.pathname === '/';
+        if (!isList) {
+            buscador.style.display = 'none';
+            return;
+        }
         
-                // 2. Encontrar el nivel #1 para ubicar el contenedor real de Vue
-                const enlaces = document.querySelectorAll('a');
-                let primerNivel = Array.from(enlaces).find(el => el.textContent.replace(/\s+/g, ' ').trim().startsWith('#1 '));
-                
-                if (!primerNivel || !primerNivel.parentElement) return;
-                
-                const contenedorLista = primerNivel.parentElement;
+        buscador.style.display = 'block';
+        const texto = document.getElementById('input-nivel').value.toLowerCase().trim();
         
-                // 3. Inyectar la barra de búsqueda físicamente DENTRO de la lista si no existe
-                if (!document.getElementById('buscador-interno')) {
-                    const searchHTML = `
-                        <div id="buscador-interno" style="padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); position: sticky; top: 0; background-color: #111; z-index: 10;">
-                            <input type="text" id="input-buscador" placeholder="🔍 Buscar nivel..." style="width: 100%; padding: 10px 15px; background-color: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: white; font-family: 'Lexend Deca', sans-serif; font-size: 14px; outline: none; box-sizing: border-box;">
-                        </div>
-                    `;
-                    
-                    // Coloca la barra al principio del contenedor, empujando el #1 naturalmente
-                    contenedorLista.insertAdjacentHTML('afterbegin', searchHTML);
+        // Identificar todos los enlaces que sean niveles (Ej: "#1 Bloodbath")
+        const enlaces = document.querySelectorAll('a');
+        const niveles = Array.from(enlaces).filter(el => /^\s*#\d+/.test(el.textContent));
         
-                    // 4. Lógica de búsqueda aplicada directamente a los hermanos de la barra
-                    document.getElementById('input-buscador').addEventListener('input', function(e) {
-                        const texto = e.target.value.toLowerCase().trim();
-                        
-                        // Recorrer todos los elementos dentro de la columna izquierda
-                        Array.from(contenedorLista.children).forEach(hijo => {
-                            // Evitar ocultar la propia barra de búsqueda
-                            if (hijo.id === 'buscador-interno') return;
-                            
-                            const textoNivel = hijo.textContent.toLowerCase().trim();
-                            
-                            if (texto === '' || textoNivel.includes(texto)) {
-                                // Restauramos la visibilidad forzando la directiva importante
-                                hijo.style.setProperty('display', '', 'important'); 
-                            } else {
-                                // Ocultamos los que no coinciden
-                                hijo.style.setProperty('display', 'none', 'important');
-                            }
-                        });
-                    });
-                }
-            }, 500); // Se ejecuta cada medio segundo para sobrevivir a los cambios de pestaña de Vue
-        </script>
+        let primerVisible = null;
+
+        niveles.forEach(nivel => {
+            nivel.classList.remove('empujar-lista'); // Limpiar para recalcular
+            
+            // Lógica de búsqueda
+            if (texto === '' || nivel.textContent.toLowerCase().includes(texto)) {
+                nivel.classList.remove('ocultar-nivel');
+                // Guardamos en memoria cuál es el primer nivel que pasó el filtro
+                if (!primerVisible) primerVisible = nivel; 
+            } else {
+                nivel.classList.add('ocultar-nivel');
+            }
+        });
+
+        // Aplicamos el margen hacia abajo ÚNICAMENTE al primer nivel de la lista visible
+        if (primerVisible) {
+            primerVisible.classList.add('empujar-lista');
+        }
+    }, 100);
+</script>
 
     </body>
 </html>
