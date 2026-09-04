@@ -75,34 +75,42 @@
 
         <router-view :class="{ dark: store.dark }"></router-view>
 
-      <!-- Buscador Fijo -->
-<div id="search-container" style="position: fixed; top: 64px; left: 0; width: 320px; z-index: 9999; background-color: #111; padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); box-sizing: border-box;">
-    <input type="text" id="buscador-niveles" placeholder="🔍 Buscar nivel..." style="width: 100%; padding: 12px; background-color: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; color: white; font-family: 'Lexend Deca', sans-serif; font-size: 14px; outline: none;">
+   <!-- Buscador Fijo -->
+<div id="search-container" style="position: fixed; top: 64px; left: 0; width: 320px; height: 60px; z-index: 9999; background-color: #111; padding: 10px 15px; border-bottom: 1px solid rgba(255,255,255,0.1); box-sizing: border-box; display: flex; align-items: center;">
+    <input type="text" id="buscador-niveles" placeholder="🔍 Buscar nivel..." style="width: 100%; padding: 8px 12px; background-color: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; color: white; font-family: 'Lexend Deca', sans-serif; font-size: 14px; outline: none;">
 </div>
 
+<style>
+    /* Esta regla es inmune a Vue.js */
+    .oculto-por-buscador {
+        display: none !important;
+    }
+</style>
+
 <script>
-    // 1. Filtro invencible (usa !important para ganarle al CSS de la plantilla)
+    // 1. Filtrado usando clases CSS en lugar de estilos en línea
     document.addEventListener('input', function(e) {
         if (e.target.id === 'buscador-niveles') {
             const texto = e.target.value.toLowerCase().trim();
             const enlaces = document.querySelectorAll('a'); 
             
             enlaces.forEach(enlace => {
-                const textoBoton = enlace.textContent.toLowerCase().trim();
+                // Limpiamos los espacios extraños que Vue le pone al texto
+                const textoBoton = enlace.textContent.toLowerCase().replace(/\s+/g, ' ').trim();
                 
-                // Si es un nivel de la barra lateral (empieza con #)
-                if (/^#\d+/.test(textoBoton) && !enlace.classList.contains('nav__tab')) {
+                // Si el botón tiene un "#" seguido de un número (es un nivel de la lista)
+                if (/#\d+/.test(textoBoton) && !enlace.classList.contains('nav__tab')) {
                     if (texto === '' || textoBoton.includes(texto)) {
-                        enlace.style.setProperty('display', 'flex', 'important'); // Forzar mostrar
+                        enlace.classList.remove('oculto-por-buscador');
                     } else {
-                        enlace.style.setProperty('display', 'none', 'important'); // Forzar ocultar
+                        enlace.classList.add('oculto-por-buscador');
                     }
                 }
             });
         }
     });
 
-    // 2. Empujar toda la lista de niveles hacia abajo
+    // 2. Rescatar a Bloodbath (#1) empujándolo hacia abajo
     setInterval(() => {
         const buscador = document.getElementById('search-container');
         if (!buscador) return;
@@ -110,19 +118,29 @@
         const isList = window.location.hash === '#/' || window.location.hash === '' || window.location.pathname === '/';
         
         if (isList) {
-            buscador.style.display = 'block';
+            buscador.style.display = 'flex';
             
-            // Buscar cualquier nivel para identificar el contenedor de la lista
-            const cualquierNivel = Array.from(document.querySelectorAll('a')).find(el => /^#\d+/.test(el.textContent.trim()));
+            // Buscamos específicamente el botón del top #1
+            const enlaces = document.querySelectorAll('a');
+            let primerNivel = null;
             
-            if (cualquierNivel && cualquierNivel.parentElement) {
-                // Le damos espacio a TODO el contenedor, así no importa qué nivel esté de primero
-                cualquierNivel.parentElement.style.setProperty('padding-top', '75px', 'important');
+            for (let enlace of enlaces) {
+                const textoLimpio = enlace.textContent.replace(/\s+/g, ' ').trim();
+                // Si el texto empieza con "#1 "
+                if (textoLimpio.startsWith('#1 ')) {
+                    primerNivel = enlace;
+                    break;
+                }
+            }
+            
+            // Le aplicamos un margen superior solo al primer nivel para que baje
+            if (primerNivel) {
+                primerNivel.style.setProperty('margin-top', '60px', 'important');
             }
         } else {
-            buscador.style.display = 'none'; // Ocultar en Leaderboard
+            buscador.style.display = 'none';
         }
-    }, 300);
+    }, 500);
 </script>
 
     </body>
