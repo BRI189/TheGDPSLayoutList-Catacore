@@ -1,12 +1,18 @@
 {
-    "id": 10565740,
-    "name": "BLOODBATH",
-    "author": "Riot and More",
-    "creators": [],
-    "verifier": "",
-    "verification": "https://youtu.be/A6xe4tKdx_c",
-    "percentToQualify": "100",
-    "password": "Free To Copy",
-    "records": [
-    ]
+  "id": 10565740,
+  "name": "BLOODBATH",
+  "author": "Riot and More",
+  "creators": [],
+  "verifier": "",
+  "verification": "https://youtu.be/A6xe4tKdx_c",
+  "percentToQualify": "100",
+  "password": "Free To Copy",
+  "records": [
+    {
+      "user": "Kevinpro55GD",
+      "link": "",
+      "percent": 100,
+      "hz": 144
+    }
+  ]
 }
