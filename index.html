@@ -34,69 +34,7 @@
         <script src="https://unpkg.com/vue@3.2.31/dist/vue.global.js"></script>
         <script src="https://unpkg.com/vue-router@4.0.14/dist/vue-router.global.prod.js"></script>
         <script type="module" src="./js/main.js"></script>
-        <script>
-            let ultimoNivel = "";
-            let linkOriginalJson = "";
         
-            setInterval(async () => {
-                // 1. Buscar la etiqueta VERIFIER
-                const titulos = document.querySelectorAll('.level-authors .type-title-sm');
-                let etiquetaVerifier = null;
-                for (let el of titulos) {
-                    if (el.textContent.trim() === 'VERIFIER') {
-                        etiquetaVerifier = el;
-                        break;
-                    }
-                }
-                if (!etiquetaVerifier) return;
-        
-                // 2. Apuntar al nombre del verificador
-                let cajaNombre = etiquetaVerifier.nextElementSibling;
-                if (!cajaNombre) return;
-        
-                let spanNombre = cajaNombre.querySelector('span');
-                if (!spanNombre || spanNombre.textContent.trim() === '') return;
-        
-                // 3. Si ya lo modificamos, no hacer nada para evitar parpadeos
-                if (spanNombre.hasAttribute('data-enlace-activo')) return;
-        
-                // 4. Obtener el ID del nivel desde la URL o el título
-                let idUrl = window.location.hash.replace('#/', '').split('?')[0].replace('#', '');
-                if (!idUrl) {
-                    let titulo = document.querySelector('.level h1');
-                    if (titulo) idUrl = titulo.textContent.trim().toLowerCase().replace(/ /g, '_');
-                }
-                if (!idUrl) return;
-        
-                // 5. Leer el archivo JSON
-                if (idUrl !== ultimoNivel) {
-                    ultimoNivel = idUrl;
-                    linkOriginalJson = ""; 
-                    try {
-                        let peticion = await fetch(`data/${idUrl}.json`);
-                        if (peticion.ok) {
-                            let jsonDatos = await peticion.json();
-                            linkOriginalJson = jsonDatos.verification; 
-                        }
-                    } catch (error) {}
-                }
-        
-                if (!linkOriginalJson) return;
-        
-                // 6. Aplicar el enlace sin romper el HTML de Vue
-                spanNombre.style.color = '#60a5fa';
-                spanNombre.style.textDecoration = 'underline';
-                spanNombre.style.cursor = 'pointer';
-                spanNombre.title = 'Ver video de verificación';
-                spanNombre.setAttribute('data-enlace-activo', 'true');
-        
-                // Evento de clic nativo
-                spanNombre.onclick = function() {
-                    window.open(linkOriginalJson, '_blank');
-                };
-        
-            }, 500);
-        </script>
     </head>
     <body id="app">
         <header :class="{ dark: store.dark }">
