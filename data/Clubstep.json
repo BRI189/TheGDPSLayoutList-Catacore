@@ -7,5 +7,12 @@
   "verification": "https://youtu.be/WX87jcaczZQ",
   "percentToQualify": 100,
   "password": "--",
-  "records": []
+  "records": [
+    {
+      "user": "Tomate de arbol",
+      "link": "https://drive.google.com/file/d/1lLHV89kV5e0iqsFaqwG8sMqd0j8dPShX/view?usp=drivesdk",
+      "percent": 100,
+      "hz": 60
+    }
+  ]
 }
