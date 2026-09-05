@@ -7,5 +7,12 @@
   "verification": "https://www.youtube.com/watch?v=3Kx3ZYBv8Wk",
   "percentToQualify": 100,
   "password": "--",
-  "records": []
+  "records": [
+    {
+      "user": "Kevinpro55GD",
+      "link": "https://photos.app.goo.gl/Ljo5Vd1j8h8K9ZA19",
+      "percent": 100,
+      "hz": 144
+    }
+  ]
 }
