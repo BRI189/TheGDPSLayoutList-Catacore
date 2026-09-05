@@ -77,6 +77,12 @@
         <router-view :class="{ dark: store.dark }"></router-view>
 
         <style>
+            .link-verificador {
+                color: #60a5fa !important;
+                text-decoration: underline !important;
+                cursor: pointer;
+                transition: 0.2s ease;
+            }
             .link-verificador:hover {
                 color: #93c5fd !important;
                 text-shadow: 0 0 8px rgba(96, 165, 250, 0.6);
@@ -88,60 +94,56 @@
             let linkOriginalJson = "";
         
             setInterval(async () => {
-                // 1. Buscar la etiqueta VERIFIER visible en pantalla
-                const elementos = document.querySelectorAll('h1, h2, h3, h4, h5, p, span, strong, b, div');
+                // 1. Buscar específicamente dentro de la cuadrícula de autores
+                const titulos = document.querySelectorAll('.level-authors .type-title-sm');
                 let etiquetaVerifier = null;
                 
-                for (let el of elementos) {
-                    if (el.textContent.trim() === 'VERIFIER' && el.children.length === 0) {
+                for (let el of titulos) {
+                    if (el.textContent.trim() === 'VERIFIER') {
                         etiquetaVerifier = el;
                         break;
                     }
                 }
         
                 if (!etiquetaVerifier) return;
+        
+                // 2. Apuntar a la caja <p class="type-body"> que le sigue directamente
                 let cajaNombre = etiquetaVerifier.nextElementSibling;
                 
-                // Si no hay un nombre de verificador, o si ya lo convertimos en link, cancelamos
-                if (!cajaNombre || cajaNombre.querySelector('.link-verificador') || cajaNombre.textContent.trim() === '') return;
-        
-                // 2. Extraer el nombre del nivel para buscar su archivo
-                // La plantilla de Vue cambia la URL cuando haces clic (ej: #/eyes_in_the_water)
-                let idUrl = window.location.hash.replace('#/', '').split('?')[0].replace('#', '');
+                // Evitar duplicados o saltar si la caja está vacía
+                if (!cajaNombre || cajaNombre.querySelector('.link-verificador')) return;
                 
-                // Respaldo: Si la URL falla, lee el texto del título principal de la página
-                if (!idUrl) {
-                    let tituloDom = document.querySelector('h1');
-                    if (tituloDom) idUrl = tituloDom.textContent.trim().toLowerCase().replace(/\s+/g, '_');
-                }
+                // 3. Extraer el nombre real que está dentro del <span>
+                let spanNombre = cajaNombre.querySelector('span');
+                if (!spanNombre || spanNombre.textContent.trim() === '') return;
         
+                // 4. Leer de qué nivel estamos sacando la información basándonos en la URL
+                let idUrl = window.location.hash.replace('#/', '').split('?')[0].replace('#', '');
                 if (!idUrl) return;
         
-                // 3. Leer silenciosamente tu archivo .json en la carpeta data/
+                // 5. Extraer el enlace directamente de tu carpeta data/
                 if (idUrl !== ultimoNivel) {
                     ultimoNivel = idUrl;
-                    linkOriginalJson = ""; // Limpiamos la variable al cambiar de nivel
+                    linkOriginalJson = ""; 
         
                     try {
-                        // Hacemos una petición interna al archivo (ej: data/eyes_in_the_water.json)
                         let peticion = await fetch(`data/${idUrl}.json`);
                         if (peticion.ok) {
                             let jsonDatos = await peticion.json();
-                            // Extraemos el link exacto que pusiste con el .exe
                             linkOriginalJson = jsonDatos.verification; 
                         }
                     } catch (error) {
-                        console.error("No se pudo leer el archivo .json para el verificador.");
+                        console.error("No se pudo leer el archivo .json");
                     }
                 }
         
-                // 4. Inyectar el link directamente al texto
-                if (linkOriginalJson && linkOriginalJson !== "") {
-                    let nombreVerificador = cajaNombre.textContent.trim();
-                    cajaNombre.innerHTML = `<a href="${linkOriginalJson}" target="_blank" class="link-verificador" style="color: #60a5fa; text-decoration: underline; cursor: pointer; transition: 0.2s;">${nombreVerificador}</a>`;
+                // 6. Inyectar el enlace reemplazando el texto estático
+                if (linkOriginalJson) {
+                    let nombreVerificador = spanNombre.textContent.trim();
+                    cajaNombre.innerHTML = `<a href="${linkOriginalJson}" target="_blank" class="link-verificador" title="Ver video de verificación">${nombreVerificador}</a>`;
                 }
             }, 500);
         </script>
-        
+
     </body>
 </html>
