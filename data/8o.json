@@ -7,5 +7,12 @@
   "verification": "https://www.youtube.com/watch?v=0-UrcvnqX60",
   "percentToQualify": 100,
   "password": "--",
-  "records": []
+  "records": [
+    {
+      "user": "Bri",
+      "link": "https://youtu.be/EB5mz9g9HQQ",
+      "percent": 100,
+      "hz": 120
+    }
+  ]
 }
