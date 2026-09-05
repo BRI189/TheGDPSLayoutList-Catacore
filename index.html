@@ -76,6 +76,75 @@
 
         <router-view :class="{ dark: store.dark }"></router-view>
 
-
+        <style>
+            /* Efecto brillante cuando le pasas el mouse al verificador */
+            .link-verificador:hover {
+                color: #93c5fd !important;
+                text-shadow: 0 0 8px rgba(96, 165, 250, 0.6);
+            }
+        </style>
+        
+        <script>
+            setInterval(() => {
+                // 1. Obtener el enlace del reproductor actual
+                const iframe = document.querySelector('iframe');
+                if (!iframe) return;
+                
+                let urlVideo = iframe.src;
+                let linkFinal = urlVideo;
+        
+                // Reconstruir el link original para que el usuario pueda abrirlo en nueva pestaña
+                if (urlVideo.includes('youtube.com/embed/')) {
+                    let id = urlVideo.split('embed/')[1].split('?')[0];
+                    // Detectar si era nuestro "hack" de TikTok
+                    if (id.startsWith('tiktok-')) {
+                        linkFinal = `https://www.tiktok.com/video/${id.replace('tiktok-', '')}`;
+                    } else {
+                        linkFinal = `https://www.youtube.com/watch?v=${id}`;
+                    }
+                } else if (urlVideo.includes('tiktok.com/embed/v2/')) {
+                    let id = urlVideo.split('v2/')[1].split('?')[0];
+                    linkFinal = `https://www.tiktok.com/video/${id}`;
+                }
+        
+                // 2. Buscar la palabra "VERIFIER" y convertir el nombre adyacente en link
+                const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+                let nodo;
+                
+                while (nodo = walker.nextNode()) {
+                    // Buscamos exactamente el texto "VERIFIER"
+                    if (nodo.nodeValue.trim() === 'VERIFIER') {
+                        
+                        // Opción A: Si el nombre está en su propio contenedor al lado (estructura de cuadrícula)
+                        let hermanoElemento = nodo.parentElement.nextElementSibling;
+                        if (hermanoElemento && !hermanoElemento.querySelector('.link-verificador')) {
+                            const nombre = hermanoElemento.textContent.trim();
+                            if (nombre && nombre !== '') {
+                                hermanoElemento.innerHTML = `<a href="${linkFinal}" target="_blank" class="link-verificador" style="color: #60a5fa; text-decoration: underline; cursor: pointer; transition: 0.2s;">${nombre}</a>`;
+                            }
+                        }
+                        
+                        // Opción B: Si el nombre es texto plano justo al lado (estructura en línea)
+                        let hermanoTexto = nodo.nextSibling;
+                        if (hermanoTexto && hermanoTexto.nodeType === 3 && hermanoTexto.nodeValue.trim().length > 0) {
+                            const nombre = hermanoTexto.nodeValue.trim();
+                            const a = document.createElement('a');
+                            a.href = linkFinal;
+                            a.target = '_blank';
+                            a.className = 'link-verificador';
+                            a.style.color = '#60a5fa';
+                            a.style.textDecoration = 'underline';
+                            a.style.cursor = 'pointer';
+                            a.textContent = nombre;
+                            
+                            // Reemplazamos el texto por el link funcional
+                            hermanoTexto.parentNode.insertBefore(document.createTextNode(' '), hermanoTexto);
+                            hermanoTexto.parentNode.replaceChild(a, hermanoTexto);
+                        }
+                    }
+                }
+            }, 500);
+        </script>
+        
     </body>
 </html>
