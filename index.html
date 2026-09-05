@@ -77,20 +77,6 @@
         <router-view :class="{ dark: store.dark }"></router-view>
 
         <style>
-            /* Efecto brillante cuando le pasas el mouse al verificador */
-            .link-verificador:hover {
-                color: #93c5fd !important;
-                text-shadow: 0 0 8px rgba(96, 165, 250, 0.6);
-            }
-        </style>
-        
-        <style>
-            .link-verificador {
-                color: #60a5fa !important;
-                text-decoration: underline !important;
-                cursor: pointer;
-                transition: 0.2s ease;
-            }
             .link-verificador:hover {
                 color: #93c5fd !important;
                 text-shadow: 0 0 8px rgba(96, 165, 250, 0.6);
@@ -98,54 +84,64 @@
         </style>
         
         <script>
-            setInterval(() => {
-                // 1. Encontrar el iframe y generar el link final
-                const iframe = document.querySelector('iframe');
-                if (!iframe || !iframe.src) return;
-                
-                let linkFinal = iframe.src;
-                if (linkFinal.includes('youtube.com/embed/')) {
-                    let id = linkFinal.split('embed/')[1].split('?')[0];
-                    if (id.startsWith('tiktok-')) {
-                        linkFinal = `https://www.tiktok.com/video/${id.replace('tiktok-', '')}`;
-                    } else {
-                        linkFinal = `https://www.youtube.com/watch?v=${id}`;
-                    }
-                } else if (linkFinal.includes('tiktok.com/embed/v2/')) {
-                    let id = linkFinal.split('v2/')[1].split('?')[0];
-                    linkFinal = `https://www.tiktok.com/video/${id}`;
-                }
+            let ultimoNivel = "";
+            let linkOriginalJson = "";
         
-                // 2. Buscar la etiqueta VERIFIER en toda la página
-                // Evaluamos todos los elementos de texto comunes en la plantilla
-                const elementos = document.querySelectorAll('h1, h2, h3, h4, h5, h6, div, p, span, strong, b');
+            setInterval(async () => {
+                // 1. Buscar la etiqueta VERIFIER visible en pantalla
+                const elementos = document.querySelectorAll('h1, h2, h3, h4, h5, p, span, strong, b, div');
                 let etiquetaVerifier = null;
-        
+                
                 for (let el of elementos) {
-                    // Si el elemento dice exactamente VERIFIER y no tiene otros elementos por dentro
                     if (el.textContent.trim() === 'VERIFIER' && el.children.length === 0) {
                         etiquetaVerifier = el;
                         break;
                     }
                 }
         
-                // 3. Convertir el nombre de al lado en un enlace
-                if (etiquetaVerifier) {
-                    // En esta plantilla, el nombre siempre es la caja que le sigue a la etiqueta
-                    let cajaNombre = etiquetaVerifier.nextElementSibling;
-                    
-                    // Si encontramos la caja y aún no tiene el enlace puesto
-                    if (cajaNombre && !cajaNombre.querySelector('.link-verificador')) {
-                        let nombre = cajaNombre.textContent.trim();
-                        
-                        // Si el nivel tiene verificador (no está vacío)
-                        if (nombre.length > 0) {
-                            cajaNombre.innerHTML = `<a href="${linkFinal}" target="_blank" class="link-verificador" title="Ver video de verificación">${nombre}</a>`;
+                if (!etiquetaVerifier) return;
+                let cajaNombre = etiquetaVerifier.nextElementSibling;
+                
+                // Si no hay un nombre de verificador, o si ya lo convertimos en link, cancelamos
+                if (!cajaNombre || cajaNombre.querySelector('.link-verificador') || cajaNombre.textContent.trim() === '') return;
+        
+                // 2. Extraer el nombre del nivel para buscar su archivo
+                // La plantilla de Vue cambia la URL cuando haces clic (ej: #/eyes_in_the_water)
+                let idUrl = window.location.hash.replace('#/', '').split('?')[0].replace('#', '');
+                
+                // Respaldo: Si la URL falla, lee el texto del título principal de la página
+                if (!idUrl) {
+                    let tituloDom = document.querySelector('h1');
+                    if (tituloDom) idUrl = tituloDom.textContent.trim().toLowerCase().replace(/\s+/g, '_');
+                }
+        
+                if (!idUrl) return;
+        
+                // 3. Leer silenciosamente tu archivo .json en la carpeta data/
+                if (idUrl !== ultimoNivel) {
+                    ultimoNivel = idUrl;
+                    linkOriginalJson = ""; // Limpiamos la variable al cambiar de nivel
+        
+                    try {
+                        // Hacemos una petición interna al archivo (ej: data/eyes_in_the_water.json)
+                        let peticion = await fetch(`data/${idUrl}.json`);
+                        if (peticion.ok) {
+                            let jsonDatos = await peticion.json();
+                            // Extraemos el link exacto que pusiste con el .exe
+                            linkOriginalJson = jsonDatos.verification; 
                         }
+                    } catch (error) {
+                        console.error("No se pudo leer el archivo .json para el verificador.");
                     }
                 }
-            }, 400);
+        
+                // 4. Inyectar el link directamente al texto
+                if (linkOriginalJson && linkOriginalJson !== "") {
+                    let nombreVerificador = cajaNombre.textContent.trim();
+                    cajaNombre.innerHTML = `<a href="${linkOriginalJson}" target="_blank" class="link-verificador" style="color: #60a5fa; text-decoration: underline; cursor: pointer; transition: 0.2s;">${nombreVerificador}</a>`;
+                }
+            }, 500);
         </script>
-
+        
     </body>
 </html>
