@@ -35,6 +35,47 @@
         <script src="https://unpkg.com/vue-router@4.0.14/dist/vue-router.global.prod.js"></script>
         <script type="module" src="./js/main.js"></script>
         
+        <!-- MEJORAS VISUALES AÑADIDAS -->
+        <style>
+            /* 1. Fondo Dinámico */
+            body, #app, .page-list {
+                background: radial-gradient(circle at 50% 20%, #161b33 0%, #0b0d17 60%, #050505 100%) !important;
+                background-attachment: fixed !important;
+            }
+
+            /* 2. Brillo Neón en la Lista */
+            .list-container a:hover {
+                background-color: rgba(96, 165, 250, 0.1) !important;
+                box-shadow: 0 0 15px rgba(96, 165, 250, 0.4), inset 0 0 10px rgba(96, 165, 250, 0.2) !important;
+                transform: translateX(6px);
+                transition: all 0.2s ease-in-out;
+            }
+            .list-container a {
+                transition: all 0.2s ease-in-out;
+            }
+
+            /* 3. Barra de Desplazamiento Estilizada */
+            ::-webkit-scrollbar {
+                width: 8px;
+            }
+            ::-webkit-scrollbar-track {
+                background: #0b0d17;
+            }
+            ::-webkit-scrollbar-thumb {
+                background: #3b82f6;
+                border-radius: 10px;
+            }
+            ::-webkit-scrollbar-thumb:hover {
+                background: #60a5fa;
+            }
+
+            /* 4. Cursor Personalizado (Borra los /* y */ /* para activarlo cuando tengas tu cursor.png) */
+            /*
+            body, #app, a, button {
+                cursor: url('cursor.png'), auto !important;
+            }
+            */
+        </style>
     </head>
     <body id="app">
         <header :class="{ dark: store.dark }">
@@ -76,8 +117,6 @@
         <a class="nav__cta type-label-lg" href="./changelog.html" style="position: fixed; top: 15px; right: 20px; z-index: 9999; background-color: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.4); color: #ffffff; text-decoration: none; padding: 0 20px; height: 36px; display: flex; align-items: center; border-radius: 8px; font-size: 15px;">Historial</a>
 
         <router-view :class="{ dark: store.dark }"></router-view>
-
-        
 
     </body>
 </html>
