@@ -84,67 +84,68 @@
             }
         </style>
         
+        <style>
+            .link-verificador {
+                color: #60a5fa !important;
+                text-decoration: underline !important;
+                cursor: pointer;
+                transition: 0.2s ease;
+            }
+            .link-verificador:hover {
+                color: #93c5fd !important;
+                text-shadow: 0 0 8px rgba(96, 165, 250, 0.6);
+            }
+        </style>
+        
         <script>
             setInterval(() => {
-                // 1. Obtener el enlace del reproductor actual
+                // 1. Encontrar el iframe y generar el link final
                 const iframe = document.querySelector('iframe');
-                if (!iframe) return;
+                if (!iframe || !iframe.src) return;
                 
-                let urlVideo = iframe.src;
-                let linkFinal = urlVideo;
-        
-                // Reconstruir el link original para que el usuario pueda abrirlo en nueva pestaña
-                if (urlVideo.includes('youtube.com/embed/')) {
-                    let id = urlVideo.split('embed/')[1].split('?')[0];
-                    // Detectar si era nuestro "hack" de TikTok
+                let linkFinal = iframe.src;
+                if (linkFinal.includes('youtube.com/embed/')) {
+                    let id = linkFinal.split('embed/')[1].split('?')[0];
                     if (id.startsWith('tiktok-')) {
                         linkFinal = `https://www.tiktok.com/video/${id.replace('tiktok-', '')}`;
                     } else {
                         linkFinal = `https://www.youtube.com/watch?v=${id}`;
                     }
-                } else if (urlVideo.includes('tiktok.com/embed/v2/')) {
-                    let id = urlVideo.split('v2/')[1].split('?')[0];
+                } else if (linkFinal.includes('tiktok.com/embed/v2/')) {
+                    let id = linkFinal.split('v2/')[1].split('?')[0];
                     linkFinal = `https://www.tiktok.com/video/${id}`;
                 }
         
-                // 2. Buscar la palabra "VERIFIER" y convertir el nombre adyacente en link
-                const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
-                let nodo;
-                
-                while (nodo = walker.nextNode()) {
-                    // Buscamos exactamente el texto "VERIFIER"
-                    if (nodo.nodeValue.trim() === 'VERIFIER') {
+                // 2. Buscar la etiqueta VERIFIER en toda la página
+                // Evaluamos todos los elementos de texto comunes en la plantilla
+                const elementos = document.querySelectorAll('h1, h2, h3, h4, h5, h6, div, p, span, strong, b');
+                let etiquetaVerifier = null;
+        
+                for (let el of elementos) {
+                    // Si el elemento dice exactamente VERIFIER y no tiene otros elementos por dentro
+                    if (el.textContent.trim() === 'VERIFIER' && el.children.length === 0) {
+                        etiquetaVerifier = el;
+                        break;
+                    }
+                }
+        
+                // 3. Convertir el nombre de al lado en un enlace
+                if (etiquetaVerifier) {
+                    // En esta plantilla, el nombre siempre es la caja que le sigue a la etiqueta
+                    let cajaNombre = etiquetaVerifier.nextElementSibling;
+                    
+                    // Si encontramos la caja y aún no tiene el enlace puesto
+                    if (cajaNombre && !cajaNombre.querySelector('.link-verificador')) {
+                        let nombre = cajaNombre.textContent.trim();
                         
-                        // Opción A: Si el nombre está en su propio contenedor al lado (estructura de cuadrícula)
-                        let hermanoElemento = nodo.parentElement.nextElementSibling;
-                        if (hermanoElemento && !hermanoElemento.querySelector('.link-verificador')) {
-                            const nombre = hermanoElemento.textContent.trim();
-                            if (nombre && nombre !== '') {
-                                hermanoElemento.innerHTML = `<a href="${linkFinal}" target="_blank" class="link-verificador" style="color: #60a5fa; text-decoration: underline; cursor: pointer; transition: 0.2s;">${nombre}</a>`;
-                            }
-                        }
-                        
-                        // Opción B: Si el nombre es texto plano justo al lado (estructura en línea)
-                        let hermanoTexto = nodo.nextSibling;
-                        if (hermanoTexto && hermanoTexto.nodeType === 3 && hermanoTexto.nodeValue.trim().length > 0) {
-                            const nombre = hermanoTexto.nodeValue.trim();
-                            const a = document.createElement('a');
-                            a.href = linkFinal;
-                            a.target = '_blank';
-                            a.className = 'link-verificador';
-                            a.style.color = '#60a5fa';
-                            a.style.textDecoration = 'underline';
-                            a.style.cursor = 'pointer';
-                            a.textContent = nombre;
-                            
-                            // Reemplazamos el texto por el link funcional
-                            hermanoTexto.parentNode.insertBefore(document.createTextNode(' '), hermanoTexto);
-                            hermanoTexto.parentNode.replaceChild(a, hermanoTexto);
+                        // Si el nivel tiene verificador (no está vacío)
+                        if (nombre.length > 0) {
+                            cajaNombre.innerHTML = `<a href="${linkFinal}" target="_blank" class="link-verificador" title="Ver video de verificación">${nombre}</a>`;
                         }
                     }
                 }
-            }, 500);
+            }, 400);
         </script>
-        
+
     </body>
 </html>
