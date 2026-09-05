@@ -1,10 +1,19 @@
 [
     {
-      "fecha": "2026-09-03",
-      "titulo": "Lanzamiento Oficial",
-      "cambios": [
-        "Se ha publicado la lista oficial con 35 niveles.",
-        ""
-      ]
+        "fecha": "4-09-2026",
+        "titulo": "Niveles añadidos",
+        "cambios": [
+            "Se ha añadido Sidestep - Top 29",
+            "Se ha añadido Eyes in the water al Top 34",
+            "Se ha añadido Hold On al top 36"
+        ]
+    },
+    {
+        "fecha": "2026-09-03",
+        "titulo": "Lanzamiento Oficial",
+        "cambios": [
+            "Se ha publicado la lista oficial con 35 niveles.",
+            ""
+        ]
     }
-  ]
+]
