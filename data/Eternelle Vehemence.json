@@ -7,5 +7,12 @@
   "verification": "https://www.youtube.com/watch?v=KMimVXiPhwg",
   "percentToQualify": 100,
   "password": "--",
-  "records": []
+  "records": [
+    {
+      "user": "Bri",
+      "link": "https://drive.google.com/drive/folders/1aGpj9wE3FuXHe9VmKTFzdlcsxR--hRYc?usp=sharing",
+      "percent": 100,
+      "hz": 60
+    }
+  ]
 }
